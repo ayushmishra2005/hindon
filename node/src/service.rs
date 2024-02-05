@@ -54,17 +54,17 @@ impl NativeExecutionDispatch for DevnetRuntimeExecutor {
 }
 
 /// Mainnet Native executor type.
-pub struct MainnetRuntimeExecutor;
+pub struct HindonRuntimeExecutor;
 
-impl NativeExecutionDispatch for MainnetRuntimeExecutor {
+impl NativeExecutionDispatch for HindonRuntimeExecutor {
 	type ExtendHostFunctions = frame_benchmarking::benchmarking::HostFunctions;
 
 	fn dispatch(method: &str, data: &[u8]) -> Option<Vec<u8>> {
-		mainnet_runtime::api::dispatch(method, data)
+		hindon_runtime::api::dispatch(method, data)
 	}
 
 	fn native_version() -> sc_executor::NativeVersion {
-		mainnet_runtime::native_version()
+		hindon_runtime::native_version()
 	}
 }
 

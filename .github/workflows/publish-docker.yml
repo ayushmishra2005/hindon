@@ -7,7 +7,7 @@ on:
         description: The docker image
         required: true
       environment:
-        description: Runtime. Either devnet, mainnet or rococo
+        description: Runtime. Either devnet, hindon or rococo
         required: false
         default: devnet
 

@@ -6,7 +6,7 @@ description = "A new Cumulus FRAME-based Substrate Runtime, ready for hacking to
 edition = "2021"
 homepage = "https://substrate.io"
 license = "Unlicense"
-repository = "https://github.com/paritytech/extended-parachain-template/"
+repository = "https://github.com/ayushmishra2005/hindon/"
 
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]

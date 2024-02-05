@@ -2,7 +2,7 @@
 panic = "unwind"
 
 [workspace]
-members = ["node", "pallets/*", "runtime/mainnet", "runtime/devnet"]
+members = ["node", "pallets/*", "runtime/hindon", "runtime/devnet"]
 resolver = "2"
 
 [workspace.package]
@@ -10,7 +10,7 @@ authors = ["Anonymous"]
 edition = "2021"
 homepage = "https://substrate.io"
 license = "Unlicense"
-repository = "https://github.com/paritytech/extended-parachain-template/"
+repository = "https://github.com/ayushmishra2005/hindon/"
 
 [workspace.dependencies]
 
@@ -31,7 +31,7 @@ smallvec = "1.11.0"
 
 # Local dependencies
 devnet-runtime = { path = "runtime/devnet" }
-mainnet-runtime = { path = "runtime/mainnet" }
+hindon-runtime = { path = "runtime/hindon" }
 pallet-motion = { path = "pallets/motion", default-features = false }
 runtime-common = { path = "runtime/common", default-features = false }
 

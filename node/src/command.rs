@@ -17,7 +17,7 @@ use sp_runtime::traits::{AccountIdConversion, Block as BlockT};
 use crate::{
 	chain_spec,
 	cli::{Cli, RelayChainCli, Subcommand},
-	service::{new_partial, DevnetRuntimeExecutor, MainnetRuntimeExecutor},
+	service::{new_partial, DevnetRuntimeExecutor, HindonRuntimeExecutor},
 };
 
 /// Helper enum that is used for better distinction of different parachain/runtime configuration
@@ -28,7 +28,7 @@ enum Runtime {
 	#[default]
 	Default,
 	Devnet,
-	Mainnet,
+	Hindon,
 }
 
 trait RuntimeResolver {
@@ -39,8 +39,8 @@ trait RuntimeResolver {
 fn runtime(id: &str) -> Runtime {
 	if id.starts_with("dev") {
 		Runtime::Devnet
-	} else if id.starts_with("main") {
-		Runtime::Mainnet
+	} else if id.starts_with("hindon") {
+		Runtime::Hindon
 	} else {
 		log::warn!("No specific runtime was recognized for ChainSpec's Id: '{}', so Runtime::Default will be used", id);
 		Runtime::default()
@@ -73,15 +73,15 @@ fn load_spec(id: &str) -> std::result::Result<Box<dyn ChainSpec>, String> {
 	Ok(match id {
 		"dev" => Box::new(chain_spec::devnet::development_config()),
 		"" | "devnet-local" | "local" => Box::new(chain_spec::devnet::local_testnet_config()),
-		"main" | "mainnet-dev" => Box::new(chain_spec::mainnet::development_config()),
-		"mainnet-local" => Box::new(chain_spec::mainnet::local_testnet_config()),
+		"main" | "hindon-dev" => Box::new(chain_spec::hindon::development_config()?),
+		"hindon-local" => Box::new(chain_spec::hindon::local_testnet_config()?),
 		path => {
 			let path: PathBuf = path.into();
 			match path.runtime() {
 				Runtime::Devnet | Runtime::Default => {
 					Box::new(chain_spec::DevnetChainSpec::from_json_file(path)?)
 				},
-				Runtime::Mainnet => Box::new(chain_spec::MainChainSpec::from_json_file(path)?),
+				Runtime::Hindon => Box::new(chain_spec::MainChainSpec::from_json_file(path)?),
 			}
 		},
 	})
@@ -173,11 +173,11 @@ macro_rules! construct_async_run {
 					{ $( $code )* }.map(|v| (v, task_manager))
 				})
 			}
-			Runtime::Mainnet => {
+			Runtime::Hindon => {
 				runner.async_run(|$config| {
-					let $components = new_partial::<mainnet_runtime::RuntimeApi, MainnetRuntimeExecutor, _>(
+					let $components = new_partial::<hindon_runtime::RuntimeApi, HindonRuntimeExecutor, _>(
 						&$config,
-						crate::service::build_import_queue::<mainnet_runtime::RuntimeApi, MainnetRuntimeExecutor>,
+						crate::service::build_import_queue::<hindon_runtime::RuntimeApi, HindonRuntimeExecutor>,
 					)?;
 					let task_manager = $components.task_manager;
 					{ $( $code )* }.map(|v| (v, task_manager))
@@ -197,11 +197,11 @@ macro_rules! construct_benchmark_partials {
 				)?;
 				$code
 			},
-			Runtime::Mainnet => {
+			Runtime::Hindon => {
 				let $partials =
-					new_partial::<mainnet_runtime::RuntimeApi, MainnetRuntimeExecutor, _>(
+					new_partial::<hindon_runtime::RuntimeApi, HindonRuntimeExecutor, _>(
 						&$config,
-						crate::service::build_import_queue::<_, MainnetRuntimeExecutor>,
+						crate::service::build_import_queue::<_, HindonRuntimeExecutor>,
 					)?;
 				$code
 			},
@@ -214,6 +214,7 @@ pub fn run() -> Result<()> {
 	let cli = Cli::from_args();
 
 	match &cli.subcommand {
+		Some(Subcommand::Key(cmd)) => cmd.run(&cli),
 		Some(Subcommand::BuildSpec(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.sync_run(|config| cmd.run(config.chain_spec, config.network))
@@ -381,13 +382,13 @@ pub fn run() -> Result<()> {
 						.map(|r| r.0)
 						.map_err(Into::into)
 					},
-					Runtime::Mainnet => {
+					Runtime::Hindon => {
 						sp_core::crypto::set_default_ss58_version(
-							mainnet_runtime::SS58Prefix::get().into(),
+							hindon_runtime::SS58Prefix::get().into(),
 						);
 						crate::service::start_parachain_node::<
-							mainnet_runtime::RuntimeApi,
-							MainnetRuntimeExecutor,
+							hindon_runtime::RuntimeApi,
+							HindonRuntimeExecutor,
 						>(config, polkadot_config, collator_options, id, hwbench)
 						.await
 						.map(|r| r.0)

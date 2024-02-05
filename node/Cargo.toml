@@ -5,7 +5,7 @@ description = "A new Cumulus FRAME-based Substrate Node, ready for hacking toget
 edition = { workspace = true }
 homepage = { workspace = true }
 license = { workspace = true }
-name = "parachain-template-node"
+name = "hindon-node"
 repository = { workspace = true }
 version = "1.1.0"
 
@@ -21,7 +21,7 @@ serde_json = { workspace = true }
 
 # Local
 devnet-runtime = { workspace = true }
-mainnet-runtime = { workspace = true }
+hindon-runtime = { workspace = true }
 runtime-common = { workspace = true }
 
 # Substrate
@@ -81,6 +81,8 @@ cumulus-relay-chain-inprocess-interface = { workspace = true }
 cumulus-relay-chain-interface = { workspace = true }
 cumulus-relay-chain-minimal-node = { workspace = true }
 cumulus-relay-chain-rpc-interface = { workspace = true }
+hex = { version = '0.4.3', default_features = false, features = ['alloc'] }
+hex-literal = '0.3.4'
 
 [build-dependencies]
 substrate-build-script-utils = { workspace = true }
@@ -89,13 +91,13 @@ substrate-build-script-utils = { workspace = true }
 default = []
 runtime-benchmarks = [
   "try-runtime-cli/try-runtime",
-  "mainnet-runtime/runtime-benchmarks",
+  "hindon-runtime/runtime-benchmarks",
   "devnet-runtime/runtime-benchmarks",
   "polkadot-cli/runtime-benchmarks",
 ]
 try-runtime = [
   "try-runtime-cli/try-runtime",
-  "mainnet-runtime/try-runtime",
+  "hindon-runtime/try-runtime",
   "devnet-runtime/try-runtime",
   "dep:sp-io",
 ]
